@@ -21,6 +21,10 @@ Nome da empresa.
 Nome ou caminho do arquivo da logo.
 Exemplo: logo.png
 
+///// EVENTO PERSONALIZADO DISPARADO /////
+
+whastsapp_redirect
+
 ///// MODO DE TESTE /////
 
 Use o parametro abaixo no final da URL:

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecionando para o WhatsApp</title>
+    <meta
+      name="description"
+      content="Pagina de redirecionamento para WhatsApp."
+    />
+
+    <script>
+      /*
+        ALTERE AQUI
+        whatsappPhone: numero do WhatsApp no formato internacional, sem +, espacos ou simbolos.
+        gtmId: ID do Google Tag Manager.
+        companyName: nome da empresa.
+        companyLogo: caminho do arquivo da logo.
+      */
+      const CLIENT_CONFIG = {
+        whatsappPhone: "5518900001111",
+        gtmId: "GTM-12345678",
+        companyName: "NOME DA EMPRESA",
+        companyLogo: "logo.png",
+      };
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", CLIENT_CONFIG.gtmId);
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <style>
+      :root {
+        --navy: #000000;
+        --navy-soft: #000000;
+        --gold: #f6c300;
+        --text: #ffffff;
+        --muted: #d9e2f2;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: var(--navy);
+        color: var(--text);
+        font-family:
+          Arial,
+          Helvetica,
+          sans-serif;
+        text-align: center;
+      }
+
+      main {
+        width: min(100%, 560px);
+      }
+
+      .logo {
+        display: block;
+        width: min(82vw, 340px);
+        height: auto;
+        margin: 0 auto 28px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.75rem, 5vw, 2.75rem);
+        line-height: 1.12;
+        font-weight: 800;
+      }
+
+      p {
+        margin: 14px 0 28px;
+        color: var(--muted);
+        font-size: clamp(1rem, 2.8vw, 1.18rem);
+        line-height: 1.5;
+      }
+
+      .loader {
+        width: 42px;
+        height: 42px;
+        margin: 0 auto 22px;
+        border: 4px solid rgba(255, 255, 255, 0.25);
+        border-top-color: var(--gold);
+        border-radius: 50%;
+        animation: spin 900ms linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <img
+        class="logo"
+        id="companyLogo"
+        src="logo.png"
+        alt="Logo da empresa"
+      />
+      <div class="loader" aria-hidden="true"></div>
+      <h1>Estamos te direcionando para o nosso Atendimento</h1>
+      <p>Aguarde alguns segundos...</p>
+    </main>
+
+    <script>
+      document.title = `Redirecionando para o WhatsApp | ${CLIENT_CONFIG.companyName}`;
+      document
+        .querySelector('meta[name="description"]')
+        .setAttribute(
+          "content",
+          `Pagina de redirecionamento para WhatsApp da ${CLIENT_CONFIG.companyName}.`
+        );
+
+      const companyLogo = document.getElementById("companyLogo");
+      companyLogo.src = CLIENT_CONFIG.companyLogo;
+      companyLogo.alt = CLIENT_CONFIG.companyName;
+
+      // Link final do WhatsApp usado no redirecionamento automatico.
+      const whatsappUrl =
+        `https://api.whatsapp.com/send?phone=${CLIENT_CONFIG.whatsappPhone}&text=Ol%C3%A1%2C%20vim%20do%20Google%20e%20quero%20agendar%20um%20servi%C3%A7o`;
+
+      // Lista dos parametros que serao capturados da URL da campanha.
+      const trackedParams = [
+        "gclid",
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_content",
+        "utm_term",
+      ];
+
+      // Lemos os parametros da URL atual, por exemplo: ?utm_source=google&gclid=abc123.
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Objeto que vai guardar os dados enviados ao dataLayer.
+      const trackingData = {};
+
+      // Define validade dos cookies em dias.
+      const cookieExpirationDays = 90;
+      const cookieMaxAgeSeconds = cookieExpirationDays * 24 * 60 * 60;
+
+      trackedParams.forEach((paramName) => {
+        const paramValue = urlParams.get(paramName) || "";
+
+        trackingData[paramName] = paramValue;
+
+        // Salva cada parametro no localStorage para recuperar depois, se necessario.
+        localStorage.setItem(paramName, paramValue);
+
+        // Salva cada parametro em cookie por 90 dias.
+        document.cookie = `${paramName}=${encodeURIComponent(
+          paramValue
+        )}; path=/; max-age=${cookieMaxAgeSeconds}; SameSite=Lax`;
+      });
+
+      // Adiciona dados extras importantes para analise e auditoria.
+      trackingData.page_url = window.location.href;
+      trackingData.timestamp = new Date().toISOString();
+
+      // Garante que o dataLayer exista antes de enviar o evento.
+      window.dataLayer = window.dataLayer || [];
+
+      // Dispara o evento que podera ser lido pelo Google Tag Manager.
+      window.dataLayer.push({
+        event: "whatsapp_redirect",
+        ...trackingData,
+      });
+
+      // Em testes, use ?debug_redirect=1 na URL para impedir o redirecionamento automatico.
+      // Assim voce consegue conferir o disparo da tag no modo Preview do GTM.
+      const isDebugRedirect = urlParams.get("debug_redirect") === "1";
+
+      // Em campanhas normais, redireciona automaticamente apos 1 segundo.
+      if (!isDebugRedirect) {
+        window.setTimeout(() => {
+          window.location.href = whatsappUrl;
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>

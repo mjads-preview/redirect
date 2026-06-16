@@ -23,7 +23,7 @@ Exemplo: logo.png
 
 ///// EVENTO PERSONALIZADO DISPARADO /////
 
-whastsapp_redirect
+whatsapp_redirect
 
 ///// MODO DE TESTE /////
 
@@ -34,7 +34,13 @@ Use o parametro abaixo no final da URL:
 Exemplo:
 http://127.0.0.1:5500/index.html?debug_redirect=1
 
-COMO FUNCIONA
+OU
+
+file:///C:/Users/Admin/Desktop/redirect/index.html?debug_redirect=1
+
+^^^^ A FORMA DE ACESSO ACIMA, SÓ FUNCIONA DE A PASTA "REDIRECT" ESTIVER NA SUA AREA DE TRABALHO ^^^^
+
+///// COMO FUNCIONA /////
 
 Quando ?debug_redirect=1 esta na URL, a pagina nao redireciona automaticamente para o WhatsApp.
 Isso serve para visualizar a pagina e testar o disparo das tags sem sair dela.
